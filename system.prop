@@ -1,0 +1,11 @@
+#
+# system.prop for transform
+#
+dalvik.vm.dexopt-data-only=1
+rild.libpath=/system/lib/libsec-ril40.so
+rild.libargs=-d /dev/ttyS0
+ro.sf.lcd_density=160
+ril.ecclist=112,911,#911,*911
+net.cdma.ppp.interface=ppp0
+ril.cdma.ppp.up=3
+

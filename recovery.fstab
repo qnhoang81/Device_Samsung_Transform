@@ -1,0 +1,7 @@
+# mount point	fstype		device
+
+/system		ubifs		/dev/block/stl5
+/data		ubifs		/dev/block/stl6
+/cache		ubifs		/dev/block/stl7
+#/efs		ubifs		/dev/ubi3_0
+/sdcard		vfat		/dev/block/mmcblk0p1
