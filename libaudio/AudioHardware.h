@@ -25,6 +25,7 @@
 
 #include <hardware_legacy/AudioHardwareBase.h>
 
+#include "secril-client.h"
 
 extern "C" {
     struct pcm;
@@ -32,9 +33,7 @@ extern "C" {
     struct mixer_ctl;
 };
 
-namespace android_audio_legacy {
-
-using namespace android;
+namespace android {
 
 // TODO: determine actual audio DSP and hardware latency
 // Additionnal latency introduced by audio DSP and hardware in ms
@@ -109,7 +108,7 @@ public:
             const char *getOutputRouteFromDevice(uint32_t device);
             const char *getInputRouteFromDevice(uint32_t device);
             const char *getVoiceRouteFromDevice(uint32_t device);
-            const char *getMicPathFromDevice();
+            const char *getMicPathFromDevice(uint32_t device);
 
             status_t setIncallPath_l(uint32_t device);
             status_t setVoiceMemoPath_l(String8 path);
@@ -118,7 +117,7 @@ public:
             void enableFMRadio();
             void disableFMRadio();
             status_t setFMRadioPath_l(uint32_t device);
-#endif 
+#endif
 //            status_t setInputSource_l(String8 source);
 
     static uint32_t    getInputSampleRate(uint32_t sampleRate);
@@ -139,6 +138,13 @@ protected:
 
 private:
 
+    enum tty_modes {
+        TTY_MODE_OFF,
+        TTY_MODE_VCO,
+        TTY_MODE_HCO,
+        TTY_MODE_FULL
+    };
+
     bool            mInit;
     bool            mMicMute;
     sp <AudioStreamOutALSA>                 mOutput;
@@ -150,8 +156,20 @@ private:
     uint32_t        mMixerOpenCnt;
     bool            mInCallAudioMode;
 
-    String8         mInputSource;
+    //String8         mInputSource;
     bool            mBluetoothNrec;
+    void*           mSecRilLibHandle;
+    HRilClient      mRilClient;
+    HRilClient      (*openClientRILD)  (void);
+    int             (*disconnectRILD)  (HRilClient);
+    int             (*closeClientRILD) (HRilClient);
+    int             (*isConnectedRILD) (HRilClient);
+    int             (*connectRILD)     (HRilClient);
+/*    int             (*setCallVolume)   (HRilClient, SoundType, int);
+    int             (*setCallAudioPath)(HRilClient, AudioPath);
+    int             (*setCallClockSync)(HRilClient, SoundClockCondition);*/
+    void            loadRILD(void);
+    status_t        connectRILDIfRequired(void);
 
 #ifdef HAVE_FM_RADIO
     int             mFmFd;
@@ -321,10 +339,6 @@ private:
         virtual status_t getNextBuffer(BufferProvider::Buffer* buffer);
         virtual void releaseBuffer(BufferProvider::Buffer* buffer);
 
-        virtual status_t addAudioEffect(effect_handle_t effect) { return INVALID_OPERATION; }
-
-        virtual status_t removeAudioEffect(effect_handle_t effect) { return INVALID_OPERATION; }
-
         void lock() { mLock.lock(); }
         void unlock() { mLock.unlock(); }
 
@@ -352,7 +366,6 @@ private:
 
 };
 
-}; // namespace android_audio_legacy
+}; // namespace android
 
 #endif
-

@@ -20,12 +20,12 @@
 #include "AudioPolicyManager.h"
 #include <media/mediarecorder.h>
 
-namespace android_audio_legacy {
+namespace android {
 
 
 
 // ----------------------------------------------------------------------------
-// AudioPolicyManager for crespo platform
+// AudioPolicyManager for samsung platform
 // Common audio policy manager code is implemented in AudioPolicyManagerBase class
 // ----------------------------------------------------------------------------
 
@@ -46,7 +46,10 @@ extern "C" void destroyAudioPolicyManager(AudioPolicyInterface *interface)
 status_t AudioPolicyManager::startInput(audio_io_handle_t input)
 {
     status_t status = AudioPolicyManagerBase::startInput(input);
-/*
+
+    LOGD("AudioPolicyManager::startInput()");
+
+
     if (status == NO_ERROR) {
         AudioInputDescriptor *inputDesc = mInputs.valueFor(input);
 
@@ -54,13 +57,16 @@ status_t AudioPolicyManager::startInput(audio_io_handle_t input)
         String8 value;
         switch(inputDesc->mInputSource) {
         case AUDIO_SOURCE_VOICE_RECOGNITION:
+	    LOGD("AudioPolicyManager::startInput - AUDIO_SOURCE_VOICE_RECOGNITION");
             value = String8("Voice Recognition");
             break;
         case AUDIO_SOURCE_CAMCORDER:
+	    LOGD("AudioPolicyManager::startInput - AUDIO_SOURCE_CAMCORDER");
             value = String8("Camcorder");
             break;
         case AUDIO_SOURCE_DEFAULT:
         case AUDIO_SOURCE_MIC:
+	    LOGD("AudioPolicyManager::startInput - AUDIO_SOURCE_MIC AUDIO_SOURCE_DEFAULT");
             value = String8("Default");
         default:
             break;
@@ -70,8 +76,8 @@ status_t AudioPolicyManager::startInput(audio_io_handle_t input)
         mpClientInterface->setParameters(input, param.toString());
 
     }
-*/
+
     return status;
 }
 
-}; // namespace android_audio_legacy
+}; // namespace android
